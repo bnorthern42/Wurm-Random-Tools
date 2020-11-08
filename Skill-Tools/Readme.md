@@ -6,4 +6,4 @@
 * Calculates Required skill to reach a desired QL.
 
 
-(reverse of each other, bassically)
+(reverse of each other, basically)
