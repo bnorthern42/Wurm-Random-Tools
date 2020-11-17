@@ -6,9 +6,4 @@
 * Calculates Required skill to reach a desired QL.
 
 
-(reverse of each other, basically)
-
-
-### No webserver needed
-
-Simply open up 'calc.html' in your favorite browser, such as chrome.
+(reverse of each other, bassically)

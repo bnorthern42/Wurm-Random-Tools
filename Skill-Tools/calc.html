@@ -10,18 +10,28 @@
     <script src="js/max.js"></script>
     <script src="js/skill.js"></script>
     <style>
-table, th, td {
-  border: 1px solid black;
-  padding: 5px;
+    table, th, td {
+      border: 1px solid black;
+      padding: 5px;
+    }
+    table {
+      border-spacing: 15px;
+    }
+    #wrap {
+  min-height: 100%;
 }
-table {
-  border-spacing: 15px;
+
+body {
+  overflow:auto;
+  padding-bottom:75px; /* this needs to be bigger than footer height*/
+
 }
+
 </style>
   </head>
   <body>
     <center>
-    <h3>Maximum impable QL for current skill</h3>
+    <h3>Maximum impable QL for current skill and Skill required for desired QL</h3>
     <h6>Real Time calcs</h6>
 
     <form>
@@ -32,7 +42,7 @@ table {
             <div>
             <b>Current Skill</b>
             <p>
-            <input type="text" name="amount" class="amount"></input>
+            <input type="text" name="amount" class="amount" maxlength="10"></input>
               </p>
                 </div>
           </td>
@@ -41,7 +51,7 @@ table {
             <div>
               <b>QL wanted</b>
             <p>
-              <input type="text" name="qln" class="qln"></input>
+              <input type="text" name="qln" class="qln" maxlength="10"></input>
 
             </p>
               </div>
@@ -53,7 +63,7 @@ table {
             <div>
               <b>Maximum Imp QL</b>
               <p>
-                <input name="sum" type="text" class="total" readonly="readonly">
+                <input name="sum" type="text" class="total" readonly="readonly" maxlength="10">
               </p>
             </div>
           </td>
@@ -62,7 +72,7 @@ table {
             <div>
               <b>Skill Needed</b>
               <p>
-              <input name="sum2" type="text" class="total1" readonly="readonly">
+              <input name="sum2" type="text" class="total1" readonly="readonly" maxlength="10">
 
             </p>
             </div>
@@ -70,7 +80,13 @@ table {
         </tr>
       </table>
     </form>
-        </center>
+</center>
+        <div class="navbar fixed-bottom">
+        <p>Author: Polarbear</p>
+        <p><a href="https://forum.wurmonline.com/index.php?/profile/72922-polarbear/">Polarbear's Forum Profile</a></p>
+        <p><b>Disclaimer: </b>Not an affiliate of Wurm Online, Code Club AB, Game Chest Group, or anyone else.</p>
+      </div>
 
   </body>
+
 </html>
