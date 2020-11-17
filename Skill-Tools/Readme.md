@@ -7,3 +7,5 @@
 
 
 (reverse of each other, bassically)
+
+Simply put open calc.html in your favorite browser. (chrome: tested)
