@@ -1,92 +1,523 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="js/max.js"></script>
-    <script src="js/skill.js"></script>
-    <style>
-    table, th, td {
-      border: 1px solid black;
-      padding: 5px;
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wurm Imp Calculator</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- Keep YOUR existing scripts exactly -->
+  <script src="js/max.js"></script>
+  <script src="js/skill.js"></script>
+
+  <style>
+    :root{
+      /* Night theme */
+      --bg: #0f1115;
+      --panel: #171a21;
+      --border: #2a2f3a;
+      --text: #e6e6e6;
+      --muted: #9aa0a6;
+      --accent: #5fa8ff;
+      --input-bg: #0b0d12;
+      --good: #2ecc71;
+
+      /* Make it big so you don't need 200% zoom */
+      --base: 20px;
+      --scale: 1.15;
+      --radius: 14px;
     }
-    table {
-      border-spacing: 15px;
+
+    /* Ultra-night theme override */
+    body[data-theme="ultra"]{
+      --bg: #07080b;
+      --panel: #0c0f15;
+      --border: #1a1f2a;
+      --text: #e9eef5;
+      --muted: #a2abb6;
+      --accent: #78b7ff;
+      --input-bg: #05060a;
     }
-    #wrap {
-  min-height: 100%;
-}
 
-body {
-  overflow:auto;
-  padding-bottom:75px; /* this needs to be bigger than footer height*/
+    /* Big-number mode */
+    body[data-bignum="1"] input.total,
+    body[data-bignum="1"] input.total1{
+      font-size: 1.5rem;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
 
-}
+    html{ font-size: var(--base); }
+    body{
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 
-</style>
-  </head>
-  <body>
-    <center>
-    <h3>Maximum impable QL for current skill and Skill required for desired QL</h3>
-    <h6>Real Time calcs</h6>
+      transform: scale(var(--scale));
+      transform-origin: top center;
+    }
 
-    <form>
-      <table>
-        <tr>
+    .wrap{
+      width: min(920px, 92vw);
+      margin: 0 auto;
+      padding: 22px 18px 110px;
+      box-sizing: border-box;
+      text-align: center;
+    }
 
-          <td>
-            <div>
-            <b>Current Skill</b>
-            <p>
-            <input type="text" name="amount" class="amount" maxlength="10"></input>
-              </p>
-                </div>
-          </td>
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 10px 0 16px;
+      padding: 14px 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(6px);
+      text-align: left;
+    }
 
-          <td>
-            <div>
-              <b>QL wanted</b>
-            <p>
-              <input type="text" name="qln" class="qln" maxlength="10"></input>
+    .title{
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-            </p>
-              </div>
-          </td>
+    h3{
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.1;
+    }
 
-        </tr>
-        <tr>
-          <td>
-            <div>
-              <b>Maximum Imp QL</b>
-              <p>
-                <input name="sum" type="text" class="total" readonly="readonly" maxlength="10">
-              </p>
-            </div>
-          </td>
+    h6{
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
 
-          <td>
-            <div>
-              <b>Skill Needed</b>
-              <p>
-              <input name="sum2" type="text" class="total1" readonly="readonly" maxlength="10">
+    .controls{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
 
-            </p>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </form>
-</center>
-        <div class="navbar fixed-bottom">
-        <p>Author: Polarbear</p>
-        <p><a href="https://forum.wurmonline.com/index.php?/profile/72922-polarbear/">Polarbear's Forum Profile</a></p>
-        <p><b>Disclaimer: </b>Not an affiliate of Wurm Online, Code Club AB, Game Chest Group, or anyone else.</p>
+    .pill{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.02);
+      color: var(--muted);
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    .btn{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn:hover{ border-color: rgba(120,183,255,0.65); }
+    .btn:active{ transform: translateY(1px); }
+
+    .slider{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+    .slider input[type="range"]{ width: 160px; }
+    .slider .val{
+      min-width: 52px;
+      text-align:right;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .toggle{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .toggle input{ transform: scale(1.2); }
+
+    /* Card/table styling */
+    .card{
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 2px);
+      padding: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      display: inline-block;
+      text-align: left;
+    }
+
+    table{
+      border-collapse: separate;
+      border-spacing: 18px 16px;
+    }
+
+    td{
+      vertical-align: top;
+      padding: 0;
+    }
+
+    b{
+      display:block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"]{
+      width: 220px;
+      padding: 14px 14px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1.15rem;
+      box-sizing: border-box;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="text"]:focus{
+      outline: none;
+      border-color: rgba(120,183,255,0.8);
+      box-shadow: 0 0 0 3px rgba(120,183,255,0.18);
+    }
+
+    input[readonly]{
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(46,204,113,0.35);
+    }
+
+    /* Output highlight */
+    .pulse{
+      animation: pulseGlow 420ms ease-out;
+    }
+    @keyframes pulseGlow{
+      0%{ box-shadow: 0 0 0 0 rgba(46,204,113,0.0); border-color: rgba(46,204,113,0.35); }
+      35%{ box-shadow: 0 0 0 4px rgba(46,204,113,0.18); border-color: rgba(46,204,113,0.75); }
+      100%{ box-shadow: 0 0 0 0 rgba(46,204,113,0.0); border-color: rgba(46,204,113,0.35); }
+    }
+
+    .footer{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(11,13,18,0.92);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      padding: 12px 16px;
+      transform: scale(calc(1 / var(--scale))); /* keeps footer from scaling weirdly */
+      transform-origin: bottom center;
+    }
+
+    .footer-inner{
+      width: min(920px, 92vw);
+      margin: 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer a{
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer a:hover{ text-decoration: underline; }
+
+    @media (max-width: 700px){
+      input[type="text"]{ width: min(260px, 78vw); }
+      table{ border-spacing: 14px 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .pulse{ animation: none; }
+      body{ transform: none; }
+      :root{ --scale: 1; }
+      .footer{ transform: none; }
+    }
+  </style>
+</head>
+<script>
+(function () {
+  function clamp(value, min, max) {
+    if (isNaN(value)) return "";
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function sanitizeFloatInput(el, min, max) {
+    let v = el.value.replace(/[^0-9.]/g, "");
+
+    // prevent multiple decimals
+    const parts = v.split(".");
+    if (parts.length > 2) {
+      v = parts[0] + "." + parts.slice(1).join("");
+    }
+
+    if (v === "") {
+      el.value = "";
+      return;
+    }
+
+    let num = parseFloat(v);
+    if (isNaN(num)) {
+      el.value = "";
+      return;
+    }
+
+    num = clamp(num, min, max);
+    el.value = num.toString();
+  }
+
+  function sanitizeIntInput(el, min, max) {
+    let v = el.value.replace(/[^0-9]/g, "");
+    if (v === "") {
+      el.value = "";
+      return;
+    }
+
+    let num = parseInt(v, 10);
+    num = clamp(num, min, max);
+    el.value = num.toString();
+  }
+
+  const amount = document.querySelector(".amount");
+  const qln = document.querySelector(".qln");
+  const imbue = document.querySelector(".imbue");
+
+  if (amount) {
+    amount.addEventListener("input", () =>
+      sanitizeFloatInput(amount, 0, 100)
+    );
+  }
+
+  if (qln) {
+    qln.addEventListener("input", () =>
+      sanitizeFloatInput(qln, 0, 100)
+    );
+  }
+
+  if (imbue) {
+    imbue.addEventListener("input", () =>
+      sanitizeIntInput(imbue, 0, 999)
+    );
+  }
+})();
+</script>
+
+<body data-theme="night" data-bignum="0">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <h3>Maximum impable QL for current skill and Skill required for desired QL</h3>
+        <h6>Real-time calcs • Dark • Bigger by default</h6>
       </div>
 
-  </body>
+      <div class="controls">
+        <div class="pill">
+          <span>Theme</span>
+          <button class="btn" id="themeBtn" type="button">Night</button>
+        </div>
 
+        <div class="pill slider" title="UI Scale">
+          <span>Scale</span>
+          <input id="scaleRange" type="range" min="1.00" max="1.45" step="0.05" value="1.15">
+          <span class="val" id="scaleVal">1.15×</span>
+        </div>
+
+        <label class="pill toggle" title="Make results larger">
+          <input id="bigNum" type="checkbox">
+          <span>Big numbers</span>
+        </label>
+
+        <button class="btn" id="resetBtn" type="button" title="Clear saved inputs">Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <form autocomplete="off">
+        <!-- KEEP TABLE so your JS closest('table') keeps working -->
+        <table>
+          <tr>
+            <td>
+              <b>Current Skill</b>
+              <input type="text" name="amount" class="amount" maxlength="10" inputmode="decimal" pattern="[0-9.]*">
+            </td>
+
+            <td>
+              <b>QL wanted</b>
+              <input type="text" name="qln" class="qln" maxlength="10" inputmode="decimal" pattern="[0-9.]*">
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <b>Maximum Imp QL</b>
+              <input name="sum" type="text" class="total" readonly="readonly" maxlength="10">
+            </td>
+
+            <td>
+              <b>Skill Needed</b>
+              <input name="sum2" type="text" class="total1" readonly="readonly" maxlength="10">
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <b>Imbue</b>
+              <input name="imbue" type="text" class="imbue" maxlength="3" inputmode="numeric" pattern="[0-9]*">
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <div>Author: Polarbear • <b>Disclaimer:</b> Not an affiliate of Wurm Online, Code Club AB, Game Chest Group, or anyone else.</div>
+      <div><a href="https://forum.wurmonline.com/index.php?/profile/72922-polarbear/" target="_blank" rel="noreferrer">Polarbear's Forum Profile</a></div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const LS_KEY = "wurm_imp_calc_ui_v1";
+      const root = document.documentElement;
+      const body = document.body;
+
+      const amount = document.querySelector(".amount");
+      const qln = document.querySelector(".qln");
+      const imbue = document.querySelector(".imbue");
+      const out1 = document.querySelector(".total");
+      const out2 = document.querySelector(".total1");
+
+      const themeBtn = document.querySelector("#themeBtn");
+      const scaleRange = document.querySelector("#scaleRange");
+      const scaleVal = document.querySelector("#scaleVal");
+      const bigNum = document.querySelector("#bigNum");
+      const resetBtn = document.querySelector("#resetBtn");
+
+      function pulseOutputs(){
+        [out1, out2].forEach(o => {
+          o.classList.remove("pulse");
+          void o.offsetWidth;
+          o.classList.add("pulse");
+        });
+      }
+
+      function save(){
+        const data = {
+          amount: amount.value,
+          qln: qln.value,
+          imbue: imbue.value,
+          theme: body.getAttribute("data-theme") || "night",
+          scale: getComputedStyle(root).getPropertyValue("--scale").trim(),
+          bignum: body.getAttribute("data-bignum") || "0"
+        };
+        try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e){}
+      }
+
+      function load(){
+        try{
+          const raw = localStorage.getItem(LS_KEY);
+          if(!raw) return;
+          const d = JSON.parse(raw);
+
+          if(typeof d.amount === "string") amount.value = d.amount;
+          if(typeof d.qln === "string") qln.value = d.qln;
+          if(typeof d.imbue === "string") imbue.value = d.imbue;
+
+          const theme = (d.theme === "ultra") ? "ultra" : "night";
+          body.setAttribute("data-theme", theme);
+          themeBtn.textContent = theme === "ultra" ? "Ultra" : "Night";
+
+          const scale = parseFloat(String(d.scale).replace("x","")) || 1.15;
+          const clamped = Math.min(1.45, Math.max(1.00, scale));
+          root.style.setProperty("--scale", clamped.toFixed(2));
+          scaleRange.value = clamped.toFixed(2);
+          scaleVal.textContent = clamped.toFixed(2) + "×";
+
+          const bn = (d.bignum === "1") ? "1" : "0";
+          body.setAttribute("data-bignum", bn);
+          bigNum.checked = (bn === "1");
+        } catch(e){}
+      }
+
+      themeBtn.addEventListener("click", () => {
+        const cur = body.getAttribute("data-theme") || "night";
+        const next = (cur === "night") ? "ultra" : "night";
+        body.setAttribute("data-theme", next);
+        themeBtn.textContent = (next === "ultra") ? "Ultra" : "Night";
+        save();
+      });
+
+      scaleRange.addEventListener("input", () => {
+        const v = parseFloat(scaleRange.value);
+        root.style.setProperty("--scale", v.toFixed(2));
+        scaleVal.textContent = v.toFixed(2) + "×";
+        save();
+      });
+
+      bigNum.addEventListener("change", () => {
+        body.setAttribute("data-bignum", bigNum.checked ? "1" : "0");
+        save();
+      });
+
+      resetBtn.addEventListener("click", () => {
+        try { localStorage.removeItem(LS_KEY); } catch(e){}
+        amount.value = "";
+        qln.value = "";
+        imbue.value = "";
+        body.setAttribute("data-theme", "night");
+        body.setAttribute("data-bignum", "0");
+        themeBtn.textContent = "Night";
+        bigNum.checked = false;
+        root.style.setProperty("--scale", "1.15");
+        scaleRange.value = "1.15";
+        scaleVal.textContent = "1.15×";
+        setTimeout(pulseOutputs, 30);
+      });
+
+      // Save + pulse when user types (does NOT interfere with your existing jQuery calcs)
+      [amount, qln, imbue].forEach(i => {
+        i.addEventListener("input", () => { save(); setTimeout(pulseOutputs, 30); });
+        i.addEventListener("change", () => { save(); setTimeout(pulseOutputs, 30); });
+      });
+
+      load();
+
+      // After load, trigger your existing jQuery handlers so outputs populate
+      setTimeout(() => {
+        amount.dispatchEvent(new Event("input", { bubbles: true }));
+        qln.dispatchEvent(new Event("input", { bubbles: true }));
+      }, 50);
+    })();
+  </script>
+</body>
 </html>
